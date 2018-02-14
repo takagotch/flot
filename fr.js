@@ -167,6 +167,200 @@ Time.now.to_i * 1000
 DateTime.now.to_i * 1000
 ActiveSupport::TimeZone.new('Asis/Shanghai').now.to_i * 1000
 
+//timezone-js
+minTickSize: array
+timeformat: null or format string
+monthNames: null or array of size 12 of strings
+dayNames: null or array of size 7 of strings
+twelveHourClock: boolean
+
+xaxis:{
+  mode: "time",
+  timeformat: "%Y/%m/%d"
+}
+
+%a: weekday name (customizable)
+%b: month name (customizable)
+%d: day of month, zero-padded (01-31)
+%e: day of month, space-padded ( 1-31)
+%H: hours, 24-hour time, zero-padded(00-23)
+%I: hours, 12-hour time, zero-padded(01-12)
+%m: month, zero-padded(01-12)
+%M: minutes, zero-padding(00-59)
+%q: quarter(1-4)
+%S: seconds, zero-padded (00-59)
+%y: year (two digits)
+%Y: year (four digits)
+%p: am/pm
+%P: AM/PM (uppercase version of %p)
+%w: weekday as number (0-6, 0 being Sunday)
+
+montNames: ["jan", "feb", "mar". "apr", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
+dayNmaes: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"]
+
+tickFormatter: function(val, axis){
+  var d = new Date(val);
+  return d.getUTCDate() + "/" + (d.getUTCMonth() + 1);
+}
+
+minTickSize: [1, "month"]
 
 
+//customizing the data series
+series: {
+  lines, pints, bars: {
+    show: boolean
+    lineWidth: number
+    fill: boolean or number
+    fillColor: null or color/gradient
+  }
+  lines, bars: {
+    zero: boolean
+  }
+  points: {
+    radius: number
+    symbol: "circle" or function
+  }
+  bars:{
+    barWidth: number
+    aligh: "left", "right" or "center"
+    horizontal: boolan
+  }
+  lines:{
+    steps: boolean  
+  }
+  shadowSize: number
+  highlightColor: color or number
+}
+colors: [ color1, color2, ...]
+
+
+
+
+
+var options = {
+  series: {
+	  lines: { show: true, fill: true, fillColor: "rgba(255, 255, 255, 0.8)" };
+    points: { show: true, fill: false}
+  }
+};
+
+
+
+function cross(ctx, x, y, radius, shadow){
+  var size = radius * Math.sqrt(Math.PI) / 2;
+  ctx.moveTo(x - size, y - size);
+  ctx.lineTo(x + size, y + size);
+  ctx.moveTo(x - size, y + size);
+  ctx.lineTo(x + size, y - size);
+}
+
+colors: ["#d18b2c", "#dba225", "#919733"]
+
+//Customizing the grid
+grid: {
+	show: boolean
+	aboveData: boolean
+	color: color
+	backgroundColor: color/gradient or null
+	margin: number or margin object
+	labelmargin: number
+	axisMargin: number
+	markings: array of markings or (fn: axes -> array of markings)
+	borderWidth: number or object with "top", "right", "bottom" and "left" properties with different widths
+	borderColor: color or null or object with "top", "right", "bottom" and "left" properties with different colors
+	minBorderMargin: number or null
+	clickable: boolean
+	hoverable: boolean
+	autoHighlight: boolean
+	mouseActiveRadius: number
+}
+
+
+margin: {
+	top: top margin in pixels
+	left: left margin in pixels
+	bottom: bottom margin in pixels
+	right: right margin in pixels
+}
+
+markings: [ { xaxis: { from: 0, to: 2 }, yaxis: { from: 10, to: 10 }, color: "#bb0000" }, ...]
+
+markings: [ { yaxis: { from: 1, to: 1} }, ... ]
+
+markings: function(axes){
+  var markings = [];
+  for(var x = Math.floor(axes.xaxis.min); x < axes.xaxis.max; x += 2)
+		markings.push({ xaxis: { from: x, to: x + 1 } });
+	return markings;
+}
+
+$.plot($("#placeholder"), [ d ], { grid: { clickable: true } });
+$("#placeholder").bind("plotclick", function(event, pos, item){
+  alert("You clicked at " + pos.x + ", " + pos.y);
+  if(item){
+    highlight(item.series, item.datapoint);
+    alert("You cilcked a point!");
+  }
+});
+
+item: {
+  datapoint: the point, e.g. [0, 2]
+  dataIndex: the index of the point in the data array
+  series: the series object
+  seriesIndex: the index of the series
+  pageX, pageY: the global screen coordinates of the point
+}
+
+$.plot($("#placeholder"), [ { label: "Foo", data: [[0, 10], [7, 3]] } ], ...);
+
+{ data: [...], label: "Foo", clickable: false }
+
+//specifying gradients
+{ colors: [ color1, color2, ...] }
+
+grid: {
+  backgroundColor: { colors: ["#000", "#999"] }
+}
+
+{ colors: [{ opacity: 0.8}, { brightness: 0.6, opaciry: 0.8 } ] }
+
+bars: {
+  show: true,
+  lineWidth: 0,
+  fill: true,
+  fillColor: { colors: [ { opaciry: 0.8 }, { opaciry: 0.1 } ] }
+}
+
+//Hooks
+function hellohook(plot, canvascontext) { alert("hello!"); };
+var plot = $.plot(placeholder, data, { hooks: { draw: [hellohook] } });
+
+
+{
+  x, y: boolean,
+  number: boolean,
+  required: boolean,
+  defaultValue: value,
+  autoscale: boolean
+}
+
+[
+  { x: true, number: true, required: true },
+  { y: true, number: true, required: true }
+]
+
+
+function multiply(plot, series, datapoints){
+  var points = datapoints.points, ps = datapoints.pointsize;
+  for(var i = 0; i < points.length; i += ps)
+    points[i + 1] *= 2;
+}
+
+
+function(plot, eventHolder){
+  eventHolder.mousedown(function(e){
+    alert("You pressed the mouse at " + e.pageX + " " + e.pageY);
+  });
+}
 
