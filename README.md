@@ -6,13 +6,13 @@ http://www.flotcharts.org/
 
 https://github.com/flot/flot/blob/master/API.md
 
-jq
+.jq
 
 ```
 <div id="placeholder" style="width:600px;height:300px"></div>
 ```
 
-```
+```js
 $.plot($(), data, options);
 $.plot($("#placeholder"), [ [0, 0], [1, 1] ], { yaxis: { max: 1 } });
 
